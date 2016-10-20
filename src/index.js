@@ -7,26 +7,21 @@ const Default = (props) => (props.children);
 class SwitchComponent extends Component {
   render() {
     let elementToRender = null;
+    let defaultOption = null;
     const currValue = this.props.val;
-    const children = React.Children.toArray(this.props.children);
-
-    const selChildren = children
-        .filter(ch => ch.props.value === currValue)
-        .map(ch => ch.props.children);
-
-    if (selChildren.length > 0) {
-      elementToRender = selChildren[0];
-    } else {
-      const defaultOpt = children
-        .filter(ch => ch.type === Default)
-        .map(ch => ch.props.children);
-
-      elementToRender = defaultOpt.length > 0 ? defaultOpt[0] : null;
-    }
+    React.Children.forEach(this.props.children, ch => {
+      if (ch.props.value === currValue) {
+        elementToRender = ch.props.children;
+        return;
+      }
+      if (ch.type === Default) {
+        defaultOption = ch.props.children;
+      }
+    });
 
     return (
       <div>
-        {elementToRender}
+        {elementToRender || defaultOption}
       </div>
     );
   }
